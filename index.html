@@ -437,13 +437,13 @@ function render(){
   drawScale(all);
 
   const cols = stray
-    ? [['name','Institute'],['state','State and city'],['course','Course'],['stray','Stray closing','num'],[null,'Status']]
-    : [['name','Institute'],['state','State and city'],['course','Course'],[0,'Round 1','num'],[1,'Round 2','num'],[2,'Round 3','num'],[null,'Status']];
+    ? [['name','Institute'],['state','State and city'],['course','Course'],['stray','Stray closing','num']]
+    : [['name','Institute'],['state','State and city'],['course','Course'],[0,'Round 1','num'],[1,'Round 2','num'],[2,'Round 3','num']];
   $('thead').innerHTML = '<tr>' + cols.map(([k,l,c]) => `<th class="${c||''}" data-k="${k}">${l}${k !== null && sortKey === k ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
 
   const cell = (v, l) => !v ? `<td class="num dash" data-l="${l}"><span>–</span></td>` : `<td class="num${v >= rank ? ' hit' : ''}" data-l="${l}"><span>${fmt(v)}</span></td>`;
   let html = '', prev = null;
-  for (const {r, st} of list.slice(0, limit)){
+  for (const {r} of list.slice(0, limit)){
     if (S.govfirst && sortKey === null && r.sector !== prev){
       html += `<tr class="sep"><td colspan="${cols.length}">${r.sector === 'G' ? 'Government seats' : 'Private seats'}</td></tr>`;
       prev = r.sector;
@@ -452,8 +452,7 @@ function render(){
     <td class="wide"><span class="sector ${r.sector === 'G' ? 'b-gov">Govt' : 'b-pvt">Private'}</span><span class="inst">${esc(r.name)}</span><div class="addr">${esc(addr(r))}</div></td>
     <td class="wide where">${esc(r.state)}<span class="city">${esc(r.city)}</span></td>
     <td class="wide"><span class="spec">${esc(r.spec)}</span><div class="ctype">${esc(r.type)}, ${esc(r.raw)}</div></td>
-    ${stray ? cell(r.stray, 'Stray closing') : r.r.map((v,i) => cell(v, 'Round ' + (i+1))).join('')}
-    <td class="wide">${st.html}</td></tr>`;
+    ${stray ? cell(r.stray, 'Stray closing') : r.r.map((v,i) => cell(v, 'Round ' + (i+1))).join('')}</tr>`;
   }
   $('tbody').innerHTML = html || `<tr><td class="empty" colspan="${cols.length}">No seats match these filters. Add a speciality or a course type, or set Show to “All seats”.</td></tr>`;
   $('more').hidden = list.length <= limit;
